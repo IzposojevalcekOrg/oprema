@@ -112,14 +112,14 @@ module.exports = {
     },
 
     /**
-     * tenantController.remove()
+     * equipmentController.remove()
      */
     remove: function (req, res) {
         var id = req.params.id;
-        tenantModel.findByIdAndRemove(id, function (err, tenant) {
+        equipmentModel.findByIdAndRemove(id, function (err, equipment) {
             if (err) {
                 return res.status(500).json({
-                    message: 'Error when deleting the tenant.',
+                    message: 'Error when deleting the equipment.',
                     error: err
                 });
             }

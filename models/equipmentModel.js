@@ -2,12 +2,29 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var equipmentSchema = new Schema({
-    'name': String,
-    'description': String,
-    'price': Number,
-    'priceTimeRange': String,
-    'created': Date,
-    'ownerId': Schema.Types.ObjectId
+    'name': {
+        type: String,
+        required: true
+    },
+    'description': {
+        type: String,
+        required: true
+    },
+    'price': {
+        type: Number,
+        required: true
+    },
+    'created': {
+        type: String,
+        default: Date.now
+    },
+    'ownerId': {
+        type: Schema.Types.ObjectId,
+        required: true
+    }
 });
 
-module.exports = mongoose.model('equipment', equipmentSchema);
+
+const equipmentModel = mongoose.model('equipment', equipmentSchema);
+
+module.exports = equipmentModel;

@@ -26,7 +26,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 // init each route separately
-app.use(baseUrl + "/tenants", require("./routes/equipmentRoutes"));
+app.use(baseUrl + "/equipment", require("./routes/equipmentRoutes"));
 
 // Leave here for easy checking if the app is running.
 app.get('/', (req, res) => res.send('<h1> Equipment API running!</h1>'));
