@@ -1,0 +1,19 @@
+{
+    "prod": {
+        "v1": {
+            "numEquipmentPerTenantGet": 10
+        },
+        "v2": {
+            "numEquipmentPerTenantGet": 20
+        }
+    },
+
+    "dev": {
+        "v1": {
+            "numEquipmentPerTenantGet": 30
+        },
+        "v2": {
+            "numEquipmentPerTenantGet": 40
+        }
+    }
+}
