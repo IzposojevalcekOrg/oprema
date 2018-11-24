@@ -1,5 +1,5 @@
 var equipmentModel = require('../models/equipmentModel.js');
-
+var generate = require("../models/factory.js");
 /**
  * equipmentController.js
  *
@@ -125,5 +125,21 @@ module.exports = {
             }
             return res.status(204).json();
         });
+    },
+
+    generateDummies: function (req, res) {
+        var num = req.body.num;
+        var ownerId = req.body.ownerId;
+        generate(num, ownerId);
+        equipmentModel.find(function (err, equipment) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Error when getting equipment.',
+                    error: err
+                });
+            }
+            return res.json(equipment);
+        });
     }
+
 };

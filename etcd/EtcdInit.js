@@ -2,14 +2,16 @@ let Etcd = require("node-etcd");
 let etcdUrls = process.env.ETCD_URL || "192.168.99.100:2379";
 let etcd = new Etcd(etcdUrls);
 
+const version = process.env.VERSION || "v1";
+const environment = process.env.ENVIRONMENT || "prod";
 
-let root = "/equipment/v1/";
+const root = `/equipment/${environment}/${version}/`;
 
-
-// Get default configuration from env and config.json
-// TODO: read config.json
+const defaultConfig = require("../default-config.json");
+// Get default configuration from env and default-config.json
 var config = {
-    "numEquipmentPerTenantGet": process.env.ETCD_NUMEQUIPMENTPERTENANTGET || 10
+    "numEquipmentPerTenantGet": process.env.ETCD_NUMEQUIPMENTPERTENANTGET ||
+        defaultConfig[environment][version]["numEquipmentPerTenantGet"] || 10
 };
 
 
@@ -23,6 +25,7 @@ etcd.get(root, {
         }
     } catch (ex) {
         console.error(ex);
+        setDefault();
     }
 });
 
@@ -51,5 +54,14 @@ function processConfig(node) {
     config[key] = value;
 }
 
-
 module.exports = config;
+
+function setDefault() {
+    for (let env in defaultConfig) {
+        for (let ver in defaultConfig[env]) {
+            for (let key in defaultConfig[env][ver]) {
+                etcd.set(`/equipment/${env}/${ver}/${key}`, defaultConfig[env][ver][key]);
+            }
+        }
+    }
+}

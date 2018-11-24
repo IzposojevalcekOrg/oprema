@@ -15,6 +15,7 @@ router.get('/:id', equipmentController.show);
 /*
  * POST
  */
+router.post('/generateDummies', equipmentController.generateDummies);
 router.post('/', equipmentController.create);
 
 /*
