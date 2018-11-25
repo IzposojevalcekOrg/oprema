@@ -14,6 +14,18 @@ var config = {
         defaultConfig[environment][version]["numEquipmentPerTenantGet"] || 10
 };
 
+function registerService() {
+    etcd.set(`${root}routes/${process.env.HOST_PORT}`,
+        JSON.stringify({
+            hostname: '127.0.0.1',
+            port: process.env.HOST_PORT,
+        }), {
+            ttl: 8
+        }
+    );
+    setTimeout(registerService, 5000);
+}
+registerService();
 
 // Get initial values
 etcd.get(root, {
