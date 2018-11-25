@@ -1,5 +1,6 @@
 var equipmentModel = require('../models/equipmentModel.js');
 var generate = require("../models/factory.js");
+var _ = require('lodash');
 /**
  * equipmentController.js
  *
@@ -11,7 +12,12 @@ module.exports = {
      * equipmentController.list()
      */
     list: function (req, res) {
-        equipmentModel.find(function (err, equipment) {
+        let filters = {
+            ownerId: req.query.ownerId
+        };
+        filters = _.omitBy(filters, _.isNil);
+
+        equipmentModel.find(filters, function (err, equipment) {
             if (err) {
                 return res.status(500).json({
                     message: 'Error when getting equipment.',
