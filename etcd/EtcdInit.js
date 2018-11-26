@@ -4,7 +4,10 @@ let etcdUrls = process.env.ETCD_URL || "192.168.99.100:2379";
 let etcd = new Etcd(etcdUrls);
 
 const serviceId = uuidv4();
-let root = "/equipment/v1/";
+const version = process.env.VERSION || "v1";
+const environment = process.env.ENVIRONMENT || "prod";
+
+const root = `/equipment/${environment}/${version}/`;
 
 
 const defaultConfig = require("../default-config.json");
@@ -37,6 +40,7 @@ etcd.get(root, {
         }
     } catch (ex) {
         console.error(ex);
+        setDefault();
     }
 });
 
@@ -65,5 +69,14 @@ function processConfig(node) {
     config[key] = value;
 }
 
-
 module.exports = config;
+
+function setDefault() {
+    for (let env in defaultConfig) {
+        for (let ver in defaultConfig[env]) {
+            for (let key in defaultConfig[env][ver]) {
+                etcd.set(`/equipment/${env}/${ver}/${key}`, defaultConfig[env][ver][key]);
+            }
+        }
+    }
+}
