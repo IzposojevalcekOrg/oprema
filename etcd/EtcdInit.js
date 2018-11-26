@@ -1,25 +1,39 @@
+const uuidv4 = require('uuid/v4');
 let Etcd = require("node-etcd");
 let etcdUrls = process.env.ETCD_URL || "192.168.99.100:2379";
 let etcd = new Etcd(etcdUrls);
 
-
+const serviceId = uuidv4();
 let root = "/equipment/v1/";
 
 
+const defaultConfig = require("../default-config.json");
 // Get default configuration from env and config.json
-// TODO: read config.json
 var config = {
-    "numEquipmentPerTenantGet": process.env.ETCD_NUMEQUIPMENTPERTENANTGET || 10
+    "numEquipmentPerTenantGet": process.env.ETCD_NUMEQUIPMENTPERTENANTGET ||
+    defaultConfig[environment][version]["numEquipmentPerTenantGet"] || 10
 };
 
+function registerService() {
+    etcd.set(`${root}routes/${serviceId}`,
+        JSON.stringify({
+            hostname: process.env.HOST,
+            port: process.env.HOST_PORT,
+        }), {
+            ttl: 8
+        }
+    );
+    setTimeout(registerService, 5000);
+}
+registerService();
 
 // Get initial values
 etcd.get(root, {
     recursive: true
 }, function (err, res) {
     try {
-        for (let i = 0; i < res.node.nodes.length; i++) {
-            processConfig(res.node.nodes[i]);
+        for (let node of res.node.nodes) {
+            processConfig(node);
         }
     } catch (ex) {
         console.error(ex);
