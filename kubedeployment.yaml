@@ -1,0 +1,47 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yaml
+    kompose.version: 1.17.0 (a74acad)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: equipment
+  name: equipment
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: equipment
+    spec:
+      containers:
+        - env:
+            - name: DB_PASSWORD
+              value: password
+            - name: DB_URI
+              value: mongo-equipment:27017
+            - name: DB_USER
+              value: equipment
+            - name: ENVIRONMENT
+              value: dev
+            - name: ETCD_NUMEQUIPMENTPERTENANTGET
+              value: "20"
+            - name: ETCD_URL
+              value: etcd:2379
+            - name: HOST
+              value: equipment
+            - name: HOST_PORT
+              value: "8080"
+            - name: VERSION
+              value: v1
+          image: mkoplan/equipment:0.5
+          name: equipment
+          ports:
+            - containerPort: 8080
+          resources: {}
+      restartPolicy: Always
+status: {}
