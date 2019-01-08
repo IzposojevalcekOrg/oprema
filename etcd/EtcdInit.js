@@ -1,6 +1,7 @@
+const _ = require("lodash");
 const uuidv4 = require('uuid/v4');
 let Etcd = require("node-etcd");
-let etcdUrls = process.env.ETCD_URL || "192.168.99.100:2379";
+let etcdUrls = process.env.ETCD_URL || "192.168.99.100:2376";
 let etcd = new Etcd(etcdUrls);
 
 const serviceId = uuidv4();
@@ -14,14 +15,14 @@ const defaultConfig = require("../default-config.json");
 // Get default configuration from env and config.json
 var config = {
     "numEquipmentPerTenantGet": process.env.ETCD_NUMEQUIPMENTPERTENANTGET ||
-    defaultConfig[environment][version]["numEquipmentPerTenantGet"] || 10
+        defaultConfig[environment][version]["numEquipmentPerTenantGet"] || 10
 };
 
 function registerService() {
     etcd.set(`${root}routes/${serviceId}`,
         JSON.stringify({
-            hostname: process.env.HOST,
-            port: process.env.HOST_PORT,
+            hostname: process.env.HOST || "equipment",
+            port: process.env.HOST_PORT || "8080",
         }), {
             ttl: 8
         }
@@ -29,6 +30,57 @@ function registerService() {
     setTimeout(registerService, 5000);
 }
 registerService();
+
+global.getServiceUrl = function (name, env, ver, callback) {
+    if (_.get(config, ["services", name, env, ver])) {
+        callback(null, _.sample(config["services"][name][env][ver]));
+    } else {
+        discoverService(name, env, ver, function (err, url) {
+            callback(err, url);
+        });
+    }
+}
+
+global.discoverService = function (name, env, ver, callback) {
+    let service = `${name}/${env}/${ver}/routes`;
+    etcd.get(service, {
+        recursive: true
+    }, function (err, res) {
+        try {
+            for (let node of res.node.nodes) {
+                let url = JSON.parse(node.value);
+                let key = node.key.split("/").pop();
+                _.set(config, ["services", name, env, ver, `_${key}`], `${url.hostname}:${url.port}/${name}/${ver}`);
+            }
+            callback(null, _.sample(config["services"][name][env][ver]));
+        } catch (ex) {
+            console.error(ex);
+            callback(Error(`Error discovering ${service}`), null);
+        }
+    });
+    watchService(name, env, ver);
+}
+
+global.watchService = function (name, env, ver) {
+    let service = `${name}/${env}/${ver}`;
+    let watcher = etcd.watcher(`${service}/routes`,
+        null, {
+            recursive: true
+        },
+    );
+    watcher.on("change", (val) => {
+        try {
+            let url = JSON.parse(val.node.value);
+            let key = val.node.key.split("/").pop();
+            _.set(config, ["services", name, env, ver, `_${key}`], `${url.hostname}:${url.port}/${name}/${ver}`);
+        } catch (ex) {
+            console.error(ex);
+            let key = val.node.key.split("/").pop();
+            console.log("removing", key);
+            _.unset(config, `services.${name}.${env}.${ver}._${key}`);
+        }
+    });
+}
 
 // Get initial values
 etcd.get(root, {
