@@ -48,7 +48,7 @@ module.exports = {
                         message: 'No such equipment'
                     });
                 }
-                return res.json(equipment);
+                return res.status(200).json(equipment);
             });
     },
 

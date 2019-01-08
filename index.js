@@ -5,11 +5,11 @@ const mongoose = require('mongoose');
 //init ETCD and watch variables
 var config = require("./etcd/EtcdInit");
 
-var user = process.env.DB_USER || "root";
-var password = process.env.DB_PASSWORD || "password";
-var db_uri = process.env.DB_URI || "192.168.99.100:27017";
+let user = process.env.DB_USER || "borrowland";
+let password = process.env.DB_PASSWORD || "password";
+let db_uri = process.env.DB_URI || "192.168.99.100:27017";
 
-mongoose.connect(`mongodb://${user}:${password}@${db_uri}/equipment?authSource=admin`, {
+mongoose.connect(`mongodb://${user}:${password}@${db_uri}/tenants?authSource=admin`, {
     useNewUrlParser: true
 });
 
@@ -33,7 +33,6 @@ app.use(baseUrl, require("./routes/equipmentRoutes"));
 // Leave here for easy checking if the app is running.
 app.get('/', (req, res) => res.send('<h1> Equipment API running!</h1>'));
 
-// Check configuration
 app.get('/etcd', (req, res) => res.send(JSON.stringify(config)));
 
 
