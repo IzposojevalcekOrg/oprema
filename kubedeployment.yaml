@@ -23,9 +23,9 @@ spec:
             - name: DB_PASSWORD
               value: password
             - name: DB_URI
-              value: mongo-tenants:27017
+              value: mongo:27017
             - name: DB_USER
-              value: tenants
+              value: borrowland
             - name: ENVIRONMENT
               value: dev
             - name: ETCD_NUMEQUIPMENTPERTENANTGET
@@ -38,7 +38,7 @@ spec:
               value: "8080"
             - name: VERSION
               value: v1
-          image: mkoplan/equipment:0.5
+          image: mkoplan/equipment:0.5.1
           name: equipment
           ports:
             - containerPort: 8080
