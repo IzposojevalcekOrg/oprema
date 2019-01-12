@@ -86,14 +86,20 @@ global.watchService = function (name, env, ver) {
 etcd.get(root, {
     recursive: true
 }, function (err, res) {
-    try {
-        for (let node of res.node.nodes) {
-            processConfig(node);
+    if (res) {
+        try {
+            for (let node of res.node.nodes) {
+                processConfig(node);
+            }
+        } catch (ex) {
+            console.error(ex);
+            setDefault();
         }
-    } catch (ex) {
-        console.error(ex);
+    }
+    else {
         setDefault();
     }
+
 });
 
 // Watcher setup

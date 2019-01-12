@@ -6,14 +6,14 @@ metadata:
     kompose.version: 1.17.0 (a74acad)
   creationTimestamp: null
   labels:
-    io.kompose.service: equipment
-  name: equipment
+    io.kompose.service: equipment2
+  name: equipment2
 spec:
   type: NodePort
   ports:
     - name: "8080"
       port: 8080
       targetPort: 8080
-      nodePort: 30002
+      nodePort: 30012
   selector:
-    io.kompose.service: equipment
+    io.kompose.service: equipment2

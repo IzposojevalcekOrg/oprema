@@ -27,6 +27,20 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
+global.health = true;
+
+app.get('/disableHealth/', (req, res) => {
+    global.health = false
+    res.send('Health disabled')
+});
+app.get('/health', (req, res) => {
+    if (health)
+        res.status(200).send(health)
+    else {
+        res.status(400).send(health);
+    }
+});
+
 // init each route separately
 app.use(baseUrl, require("./routes/equipmentRoutes"));
 

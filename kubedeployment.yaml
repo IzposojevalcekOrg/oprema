@@ -6,8 +6,8 @@ metadata:
     kompose.version: 1.17.0 (a74acad)
   creationTimestamp: null
   labels:
-    io.kompose.service: equipment
-  name: equipment
+    io.kompose.service: equipment2
+  name: equipment2
 spec:
   replicas: 1
   strategy:
@@ -16,7 +16,7 @@ spec:
     metadata:
       creationTimestamp: null
       labels:
-        io.kompose.service: equipment
+        io.kompose.service: equipment2
     spec:
       containers:
         - env:
@@ -38,8 +38,14 @@ spec:
               value: "8080"
             - name: VERSION
               value: v1
-          image: mkoplan/equipment:0.5.1
-          name: equipment
+          image: mkoplan/equipment:0.5.2
+          name: equipment2
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 5
           ports:
             - containerPort: 8080
           resources: {}
