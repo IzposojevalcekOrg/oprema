@@ -5,28 +5,28 @@ var equipmentController = require('../controllers/equipmentController.js');
 /*
  * GET
  */
-router.get('/', equipmentController.list);
+router.get('/', equipmentController.logger, equipmentController.list);
 
 /*
  * GET
  */
-router.get('/:id', equipmentController.show);
+router.get('/:id', equipmentController.logger, equipmentController.show);
 
 /*
  * POST
  */
-router.post('/generateDummies', equipmentController.generateDummies);
-router.post('/', equipmentController.create);
+router.post('/generateDummies', equipmentController.logger, equipmentController.generateDummies);
+router.post('/', equipmentController.logger, equipmentController.create);
 
 /*
  * PUT
  */
-router.put('/:id', equipmentController.update);
+router.put('/:id', equipmentController.logger, equipmentController.update);
 
 /*
  * DELETE
  */
-router.delete('/:id', equipmentController.remove);
+router.delete('/:id', equipmentController.logger, equipmentController.remove);
 
 
 module.exports = router;

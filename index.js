@@ -1,10 +1,7 @@
 const express = require('express')
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-
-//init ETCD and watch variables
 var config = require("./etcd/EtcdInit");
-
 let user = process.env.DB_USER || "borrowland";
 let password = process.env.DB_PASSWORD || "password";
 let db_uri = process.env.DB_URI || "192.168.99.100:27017";
@@ -14,21 +11,30 @@ mongoose.connect(`mongodb://${user}:${password}@${db_uri}/tenants?authSource=adm
 });
 
 var db = mongoose.connection;
-
 const port = process.env.PORT || 8080;
 const environment = process.env.ENVIRONMENT || "prod";
 const version = process.env.VERSION || "v1";
 let app = express();
 let baseUrl = "/equipment/" + version;
 
-// body parser must be initiated before any request route
 app.use(bodyParser.urlencoded({
     extended: false
 }));
 app.use(bodyParser.json());
 
-global.health = true;
+// METRICS
+const NodeProcessMetrics = require('node-process-metrics');
+const NodeProcessMetricsPrometheus = require('node-process-metrics-prometheus');
 
+// Use as an event emitter
+const pm = new NodeProcessMetricsPrometheus({
+    metrics: new NodeProcessMetrics({ period: 5000 })
+});
+pm.on('metrics', (metrics) => {
+    console.log({metrics: metrics, time: Date(), source: baseUrl});
+});
+
+global.health = true;
 app.get('/disableHealth/', (req, res) => {
     global.health = false
     res.send('Health disabled')
