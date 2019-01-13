@@ -34,6 +34,12 @@ pm.on('metrics', (metrics) => {
     console.log({metrics: metrics, time: Date(), source: baseUrl});
 });
 
+let logger = function (req, res, next) {
+    let _req = {headers: req.headers, url: req.url, method: req.method, body: req.body};
+    console.log({request: _req, time: Date(), baseUrl: req.baseUrl, originalUrl: req.originalUrl });
+    next();
+};
+app.use(logger);
 global.health = true;
 app.get('/disableHealth/', (req, res) => {
     global.health = false

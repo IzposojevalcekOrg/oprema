@@ -7,7 +7,7 @@ language: node_js
 dist: trusty
 
 env:
-  - DOCKER_IMAGE=mkoplan/equipment:0.5.5
+  - DOCKER_IMAGE=mkoplan/equipment:0.5.6
 
 script:
   - docker build -t "$DOCKER_IMAGE" .

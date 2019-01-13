@@ -146,12 +146,6 @@ module.exports = {
             }
             return res.json(equipment);
         });
-    },
-
-    logger: function (req, res, next) {
-        let _req = {headers: req.headers, url: req.url, method: req.method, body: req.body};
-        console.log({request: _req, time: Date(), baseUrl: req.baseUrl, originalUrl: req.originalUrl });
-        next();
     }
 
 

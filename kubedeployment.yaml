@@ -38,7 +38,7 @@ spec:
               value: "8080"
             - name: VERSION
               value: v1
-          image: mkoplan/equipment:0.5.5
+          image: mkoplan/equipment:0.5.6
           name: equipment2
           livenessProbe:
             httpGet:
